@@ -17,12 +17,17 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    @Html.ActionLink("홈", "Index", "Home", new { @class = "nav-link" })
+                    @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
+
                 </li>
+                <li class="navbar-nav">
+                    @Html.ActionLink("Orders", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                
             </ul>
         </div>
     </nav>
-    <div class="container body-content">
+    <div class="container-fluid body-content">
         @RenderBody()
         <hr />
         <footer>

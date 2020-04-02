@@ -17,14 +17,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @for (var i = 0; i < ViewBag.Names.Length; i+=1)
+                    {
                     <tr>
-                        <td>name</td>
-                        <td>rows</td>
+                        <td>@ViewBag.Names[i]</td>
+                        <td>@ViewBag.Rows[i]</td>
                     </tr>
-                    <tr>
-                        <td>name</td>
-                        <td>rows</td>
-                    </tr>
+                    }
                 </tbody>
             </table>
         </div>
