@@ -18,7 +18,7 @@ namespace Northwind.Controllers
     public class HomeController : Controller
     {
         private NorthwindEntities1 db = new NorthwindEntities1();
-
+        
         public ActionResult Index()
         {
             
@@ -41,71 +41,71 @@ namespace Northwind.Controllers
 
                 
                 var CountQuery = (
-                from customer in db.Employees
-                select customer
+                from count in db.Employees
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Categories
-                select customer
+                from count in db.Categories
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Customers
-                select customer
+                from count in db.Customers
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Shippers
-                select customer
+                from count in db.Shippers
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Suppliers
-                select customer
+                from count in db.Suppliers
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Orders
-                select customer
+                from count in db.Orders
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Products
-                select customer
+                from count in db.Products
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Order_Details
-                select customer
+                from count in db.Order_Details
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Region
-                select customer
+                from count in db.Region
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
 
                 CountQuery = (
-                from customer in db.Territories
-                select customer
+                from count in db.Territories
+                select count
                 ).Count();
 
                 rows.Add(CountQuery);
