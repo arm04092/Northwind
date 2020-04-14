@@ -60,42 +60,49 @@ namespace Northwind.Controllers
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Shippers
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Suppliers
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Orders
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Products
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Order_Details
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Region
                 select customer
                 ).Count();
 
                 rows.Add(CountQuery);
+
                 CountQuery = (
                 from customer in db.Territories
                 select customer

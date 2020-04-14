@@ -20,7 +20,7 @@
                     @for (var i = 0; i < ViewBag.Names.Length; i+=1)
                     {
                     <tr>
-                        <td>@ViewBag.Names[i]</td>
+                        <td>@Html.ActionLink(ViewBag.Names[i] as string, "Index", ViewBag.Names[i] as string, new { area = "" }, new { @class = "" })</td>
                         <td>@ViewBag.Rows[i]</td>
                     </tr>
                     }
