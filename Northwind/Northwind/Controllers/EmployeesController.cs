@@ -118,5 +118,33 @@ namespace Northwind.Controllers
 
             return View(employeesForm);
         }
+
+        // GET: Employees/Delete
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Employees employees = db.Employees.Find(id);
+            if (employees == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(employees);
+        }
+
+        // POST: Employees/Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Employees employees = db.Employees.Find(id);
+            db.Employees.Remove(employees);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }
