@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using System.Net;
+using System.IO;
 
 namespace Northwind.Controllers
 {
@@ -47,7 +48,14 @@ namespace Northwind.Controllers
                 byte[] image = db.Employees.Where(m => m.EmployeeID == id).Select(m => m.Photo).SingleOrDefault();
 
                 // 78 is the size of the OLE header for Northwind images
-                ms.Write(image, 78, image.Length - 78);
+                if(id<10)
+                {
+                    ms.Write(image, 78, image.Length - 78);
+                }
+                else
+                {
+                    ms.Write(image, 0, image.Length);
+                }
 
                 return File(ms.ToArray(), "image/jpeg");
             }
@@ -63,18 +71,44 @@ namespace Northwind.Controllers
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EmployeeID,LastName,FirstName,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,Photo,Notes,ReportsTo,PhotoPath")]
-                                    Employees employees)
+        // id와 path는 바인딩 안함
+        public ActionResult Create([Bind(Include = "LastName,FirstName,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,Photo,Notes,ReportsTo")]
+                                    EmployeesForm employeesForm)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    ViewBag.ReportsTo = new SelectList(db.Employees, "ReportsTo", "LastName", employeesForm.ReportsTo);
+                    Employees employees = new Employees();
+                    if ( employeesForm.Photo != null && employeesForm.Photo.ContentLength > 0 && employeesForm.Photo.ContentType.Contains("image"))
+                    {
+                        MemoryStream target = new MemoryStream();
+                        employeesForm.Photo.InputStream.CopyTo(target);
+                        byte[] data = target.ToArray();
+                        employees.Photo = data;
+                        employees.PhotoPath = Path.Combine(Server.MapPath("~App_Data/photo"), employeesForm.Photo.FileName);
+                    }
+                    employees.Address = employeesForm.Address;
+                    employees.BirthDate = employeesForm.BirthDate;
+                    employees.City = employeesForm.City;
+                    employees.Country = employeesForm.Country;
+                    employees.Extension = employeesForm.Extension;
+                    employees.FirstName = employeesForm.FirstName;
+                    employees.HireDate = employeesForm.HireDate;
+                    employees.HomePhone = employeesForm.HomePhone;
+                    employees.LastName = employeesForm.LastName;                    
+                    employees.Notes = employeesForm.Notes;
+                    employees.PostalCode = employeesForm.PostalCode;
+                    employees.Region = employeesForm.Region;
+                    employees.ReportsTo = employeesForm.ReportsTo;
+                    employees.Title = employeesForm.Title;
+                    employees.TitleOfCourtesy = employeesForm.TitleOfCourtesy;
                     db.Employees.Add(employees);
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                ViewBag.ReportsTo = new SelectList(db.Employees, "ReportsTo", "LastName", employees.ReportsTo);
+                
             }
             catch (Exception e)
             {
@@ -82,7 +116,7 @@ namespace Northwind.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            return View(employees);
+            return View(employeesForm);
         }
     }
 }
