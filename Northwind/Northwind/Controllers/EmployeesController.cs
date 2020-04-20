@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using System.Net;
 using System.IO;
+using System.Data;
 
 namespace Northwind.Controllers
 {
@@ -90,14 +91,16 @@ namespace Northwind.Controllers
                         employees.PhotoPath = Path.Combine(Server.MapPath("~App_Data/photo"), employeesForm.Photo.FileName);
                     }
                     employees.Address = employeesForm.Address;
-                    employees.BirthDate = employeesForm.BirthDate;
+                    if (employeesForm.BirthDate != null)
+                        employees.BirthDate = Convert.ToDateTime(employeesForm.BirthDate);
                     employees.City = employeesForm.City;
                     employees.Country = employeesForm.Country;
                     employees.Extension = employeesForm.Extension;
                     employees.FirstName = employeesForm.FirstName;
-                    employees.HireDate = employeesForm.HireDate;
+                    if (employeesForm.HireDate != null) 
+                        employees.HireDate = Convert.ToDateTime(employeesForm.HireDate);
                     employees.HomePhone = employeesForm.HomePhone;
-                    employees.LastName = employeesForm.LastName;                    
+                    employees.LastName = employeesForm.LastName;
                     employees.Notes = employeesForm.Notes;
                     employees.PostalCode = employeesForm.PostalCode;
                     employees.Region = employeesForm.Region;
@@ -110,9 +113,10 @@ namespace Northwind.Controllers
                 }
                 
             }
-            catch (Exception e)
+            catch (DataException e)
             {
                 System.Diagnostics.Trace.WriteLine("message:\n"+e.Message);
+                System.Diagnostics.Trace.WriteLine("inner exception message:\n" + ExceptionExtensions.GetOriginalException(e).Message);
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
@@ -145,6 +149,107 @@ namespace Northwind.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        // GET: Employees/Edit
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Employees employees = db.Employees.Find(id);
+            if( employees == null )
+            {
+                return HttpNotFound();
+            }
+            EmployeesForm employeesForm = new EmployeesForm();
+
+            employeesForm.Address = employees.Address;
+            if (employees.BirthDate != null)
+                employeesForm.BirthDate = employees.BirthDate.ToString().Substring(0,10);
+            employeesForm.City = employees.City;
+            employeesForm.Country = employees.Country;
+            employeesForm.Extension = employees.Extension;
+            employeesForm.FirstName = employees.FirstName;
+            if (employees.HireDate != null)
+                employeesForm.HireDate = employees.HireDate.ToString().Substring(0, 10);
+            employeesForm.HomePhone = employees.HomePhone;
+            employeesForm.LastName = employees.LastName;
+            employeesForm.Notes = employees.Notes;
+            employeesForm.PostalCode = employees.PostalCode;
+            employeesForm.Region = employees.Region;
+            employeesForm.ReportsTo = employees.ReportsTo;
+            employeesForm.Title = employees.Title;
+            employeesForm.TitleOfCourtesy = employees.TitleOfCourtesy;
+            /*
+            if (employees.Photo != null)
+                employeesForm.Photo = (HttpPostedFileBase)new MemoryPostedFile(employees.Photo);
+            */
+            ViewBag.ReportsTo = new SelectList(db.Employees, "ReportsTo", "LastName");
+            return View(employeesForm);
+        }
+
+        // POST: Employees/Edit
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPost(int? id)
+        {
+            System.Diagnostics.Trace.WriteLine("id:" + id);
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var EmployeesToUpdate = db.Employees.Find(id);
+            if (TryUpdateModel(EmployeesToUpdate, "",
+                new string[] { "LastName", "FirstName", "Title", "TitleOfCourtesy", "BirthDate", "HireDate", "Address", "City", "Region", "PostalCode", "Country", "HomePhone", "Extension","Notes", "ReportsTo" }))
+            {
+                try
+                {
+                    
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch(DataException /* dex */)
+                {
+                    //  
+                    // Loging
+                    //
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
+            }
+
+            return View(EmployeesToUpdate);
+        }
+    }
+
+    public class MemoryPostedFile : HttpPostedFileBase
+    {
+        private readonly byte[] fileBytes;
+
+        public MemoryPostedFile(byte[] fileBytes, string fileName = null)
+        {
+            this.fileBytes = fileBytes;
+            this.FileName = fileName;
+            this.InputStream = new MemoryStream(fileBytes);
+        }
+
+        public override int ContentLength => fileBytes.Length;
+
+        public override string FileName { get; }
+
+        public override Stream InputStream { get; }
+    }
+
+    public static class ExceptionExtensions
+    {
+        public static Exception GetOriginalException(this Exception ex)
+        {
+            if (ex.InnerException == null) return ex;
+
+            return ex.InnerException.GetOriginalException();
         }
     }
 }
