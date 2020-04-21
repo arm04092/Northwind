@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Net;
 using System.IO;
 using System.Data;
+using PagedList;
 
 namespace Northwind.Controllers
 {
@@ -16,10 +17,59 @@ namespace Northwind.Controllers
         private NorthwindEntities1 db = new NorthwindEntities1();
 
         // GET: Employees
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
-            
-            return View(db.Employees.ToList());
+            // sort param
+            ViewBag.IDSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
+            ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
+            ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
+            ViewBag.CurrentSort = sortOrder;
+
+            // search param
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var employees = from e in db.Employees
+                            select e;
+            // filtering
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                employees = employees.Where(e => e.LastName.Contains(searchString) || e.FirstName.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name":
+                    employees = employees.OrderBy(e => e.LastName);
+                    break;
+                case "name_desc":
+                    employees = employees.OrderByDescending(e => e.LastName);
+                    break;
+                case "Date":
+                    employees = employees.OrderBy(e => e.HireDate);
+                    break;
+                case "date_desc":
+                    employees = employees.OrderByDescending(e => e.HireDate);
+                    break;
+                case "id_desc":
+                    employees = employees.OrderByDescending(e => e.EmployeeID);
+                    break;
+                default:
+                    employees = employees.OrderBy(e => e.EmployeeID);
+                    break;
+            }
+            // pagination
+            int pageSize = 3;
+            int pageNumber = (page ?? 1); // if page != null ? page : 1
+
+            return View(employees.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Employees/Details/{id}
@@ -116,7 +166,8 @@ namespace Northwind.Controllers
             catch (DataException e)
             {
                 System.Diagnostics.Trace.WriteLine("message:\n"+e.Message);
-                System.Diagnostics.Trace.WriteLine("inner exception message:\n" + e.GetBaseException().Message);
+                if(e.GetBaseException() != null)
+                    System.Diagnostics.Trace.WriteLine("inner exception message:\n" + e.GetBaseException().Message);
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
@@ -166,12 +217,14 @@ namespace Northwind.Controllers
             EmployeesForm employeesForm = new EmployeesForm();
 
             employeesForm.Address = employees.Address;
+            // date formatting
             if (employees.BirthDate != null)
                 employeesForm.BirthDate = employees.BirthDate.ToString().Substring(0,10);
             employeesForm.City = employees.City;
             employeesForm.Country = employees.Country;
             employeesForm.Extension = employees.Extension;
             employeesForm.FirstName = employees.FirstName;
+            // date formatting
             if (employees.HireDate != null)
                 employeesForm.HireDate = employees.HireDate.ToString().Substring(0, 10);
             employeesForm.HomePhone = employees.HomePhone;
@@ -242,5 +295,5 @@ namespace Northwind.Controllers
 
         public override Stream InputStream { get; }
     }
-    
+
 }

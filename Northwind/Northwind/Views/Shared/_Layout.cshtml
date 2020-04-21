@@ -19,14 +19,16 @@
                 <li class="nav-item">
                     @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
                 </li>
-                <li class="navbar-nav">
-                    @Html.ActionLink("Orders", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })
-                </li>
-                <li class="navbar-nav">
-                    @Html.ActionLink("Employees", "Index", "Employees", new { area = "" }, new { @class = "nav-link" })
-                </li>
-                <li class="navbar-nav">
-                    @Html.ActionLink("Customers", "Index", "Customers", new { area = "" }, new { @class = "nav-link" })
+                <!-- Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                        Index Dropdown
+                    </a>
+                    <div class="dropdown-menu">
+                        @Html.ActionLink("Orders", "Index", "Orders", new { area = "" }, new { @class = "dropdown-item" })
+                        @Html.ActionLink("Employees", "Index", "Employees", new { area = "" }, new { @class = "dropdown-item" })
+                        @Html.ActionLink("Customers", "Index", "Customers", new { area = "" }, new { @class = "dropdown-item" })
+                    </div>
                 </li>
             </ul>
         </div>
