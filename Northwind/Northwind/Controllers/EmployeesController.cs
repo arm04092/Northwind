@@ -116,7 +116,7 @@ namespace Northwind.Controllers
             catch (DataException e)
             {
                 System.Diagnostics.Trace.WriteLine("message:\n"+e.Message);
-                System.Diagnostics.Trace.WriteLine("inner exception message:\n" + ExceptionExtensions.GetOriginalException(e).Message);
+                System.Diagnostics.Trace.WriteLine("inner exception message:\n" + e.GetBaseException().Message);
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
@@ -242,14 +242,5 @@ namespace Northwind.Controllers
 
         public override Stream InputStream { get; }
     }
-
-    public static class ExceptionExtensions
-    {
-        public static Exception GetOriginalException(this Exception ex)
-        {
-            if (ex.InnerException == null) return ex;
-
-            return ex.InnerException.GetOriginalException();
-        }
-    }
+    
 }
