@@ -19,7 +19,7 @@
                     @for (var i = 0; i < ViewBag.Names.Length; i+=1)
                     {
                     <tr>
-                        <td>@Html.ActionLink(ViewBag.Names[i] as string, "Index", ViewBag.Names[i] as string, new { area = "" }, new { @class = "" })</td>
+                        <td>@Html.ActionLink(ViewBag.Names[i] as string, "Index", ViewBag.Names[i] as string, new { area = "" }, new { @id = ViewBag.Names[i].Replace(" ","_") })</td>
                         <td>@ViewBag.Rows[i]</td>
                     </tr>
                     }
@@ -28,3 +28,15 @@
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $('#Region').attr("href", "#");
+            $('#Territories').attr("href", "#");
+            $('#Order_Details').attr("href", "#");
+            $('#Categories').attr("href", "#");
+        });
+    </script>    
+}

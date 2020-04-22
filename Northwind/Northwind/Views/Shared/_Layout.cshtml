@@ -29,7 +29,12 @@
                         @Html.ActionLink("Employees", "Index", "Employees", new { area = "" }, new { @class = "dropdown-item" })
                         @Html.ActionLink("Customers", "Index", "Customers", new { area = "" }, new { @class = "dropdown-item" })
                         @Html.ActionLink("Shippers", "Index", "Shippers", new { area = "" }, new { @class = "dropdown-item" })
+                        @Html.ActionLink("Products", "Index", "Products", new { area = "" }, new { @class = "dropdown-item" })
+                        @Html.ActionLink("Suppliers", "Index", "Suppliers", new { area = "" }, new { @class = "dropdown-item" })
                     </div>
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("Statistics", "Statistics", "Home", new { area = "" }, new { @class = "nav-link" })
                 </li>
             </ul>
         </div>
