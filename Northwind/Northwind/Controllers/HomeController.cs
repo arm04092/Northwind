@@ -24,6 +24,8 @@ namespace Northwind.Controllers
             
             try
             {
+                /* Table List */
+
                 List<string> names = new List<string>();
                 
                 names.Add("Employees");
@@ -37,9 +39,10 @@ namespace Northwind.Controllers
                 names.Add("Region");
                 names.Add("Territories");
 
+                // table rows
+
                 List<int> rows = new List<int>();
 
-                
                 var CountQuery = (
                 from count in db.Employees
                 select count
@@ -115,9 +118,18 @@ namespace Northwind.Controllers
             }
             catch (Exception ex)
             {
+                ///
+                /// logging
+                ///
                 System.Diagnostics.Trace.WriteLine(ex.Message);
             }
 
+            return View();
+        }
+
+        public ActionResult Statistics()
+        {
+            
             return View();
         }
     }
